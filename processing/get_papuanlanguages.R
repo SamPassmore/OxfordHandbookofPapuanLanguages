@@ -24,6 +24,6 @@ cat("There are", n_languages, "Papuan languages.\n")
 n_clades = n_distinct(papuan_languages$Family)
 cat("There are", n_clades, "different families.\n")
 
-write.csv(papuan_languages, "processed_data/papuan_languages.csv")
+write.csv(papuan_languages, "processed_data/papuan_languages.csv", row.names = FALSE)
 
 
