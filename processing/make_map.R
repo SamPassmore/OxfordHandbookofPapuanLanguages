@@ -9,22 +9,7 @@ library(ggplot2)
 library(ggrepel)
 
 ## Get outline of New Guinea
-# Map of Indonesia
-indonesia = ne_states(country = "Indonesia", returnclass = "sf")
-
-# only include West Papua
-west_papua = indonesia[indonesia$name %in% c("Papua", "Papua Barat", "Maluku", "Nusa Tenggara Timur", "Maluku Utara"),]
-
-# Map of PNG
-png = ne_states(country = "Papua New Guinea", returnclass = "sf")
-east_timor = ne_states(country = "East Timor", returnclass = "sf")
-
-# Map of Solomonds
-solomons = ne_states(country = "Solomon Islands", returnclass = "sf")
-solomons = solomons[solomons$longitude < 163,]
-
-# Merge
-new_guinea = rbind(west_papua, png, east_timor, solomons)
+new_guinea = sf::read_sf("processed_data/base_map.shp")
 
 ## Get data locations
 papuan_languages = read.csv('processed_data/papuan_languages.csv')
