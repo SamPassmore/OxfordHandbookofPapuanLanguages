@@ -1,0 +1,16 @@
+"id","site","FRic"
+"parentsandsibs_vectors.csv","Austronesian",0.860927247069151
+"parentsandsibs_vectors.csv","Indo-European",0.145533921270896
+"parentsandsibs_vectors.csv","Pama-Nyungan",0.548904365083365
+"parentsandsibs_vectors.csv","Papuan",0.731020314545656
+"parentsandsibs_vectors.csv","Global",1
+"sibling_vectors.csv","Austronesian",0.950676229582855
+"sibling_vectors.csv","Indo-European",0.223652392109963
+"sibling_vectors.csv","Pama-Nyungan",0.342024673911979
+"sibling_vectors.csv","Papuan",0.919987405636637
+"sibling_vectors.csv","Global",1
+"sibsandcousins_vectors.csv","Austronesian",0.925373577882352
+"sibsandcousins_vectors.csv","Indo-European",0.275767296735918
+"sibsandcousins_vectors.csv","Pama-Nyungan",0.452175590930267
+"sibsandcousins_vectors.csv","Papuan",0.688977447988896
+"sibsandcousins_vectors.csv","Global",1
