@@ -138,7 +138,7 @@ fr_df_global = fr_df %>%
   filter(!is.na(family)) %>% 
   rbind(., global_df)
 
-any(is.na(fr_df_global$family))
+any(is.na(fr_df_global$family)) == FALSE
 
 # axis limits
 fr_df_global = fr_df_global %>%

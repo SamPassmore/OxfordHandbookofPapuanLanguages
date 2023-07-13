@@ -10,10 +10,10 @@ system("Rscript processing/some_fixes.R")
 # 3. Make maps 
 system("Rscript processing/base_map.R")
 system("Rscript processing/make_map.R")
-system("Rscript processing/visualise_syncretisms.R")
 
 # 4. Identify syncritisms where Papuan languages stand out
 system("Rscript analysis/examine_syncretisms.R")
+system("Rscript processing/visualise_syncretisms.R")
 
 # 5. How many unique Papuan structures are there?
 system("Rscript analysis/unique_papuan_structures.R")
