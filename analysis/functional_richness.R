@@ -41,7 +41,6 @@ get_fr = function(structures, metric, dim){
   list(functional_richness = fr, mds = kinbank_mds)
 }
 
-
 ## Load the data
 structure_files = list.files('processed_data/', "vectors.csv", full.names = TRUE)
 structural_vectors = sapply(structure_files, read.csv, row.names = 1)
@@ -70,7 +69,7 @@ names(functional_richness) = basename(structure_files)
 
 fr_scores = lapply(functional_richness, "[[", 1)
 
-# fr_df = bind_rows(functional_richness, .id = "subset")
+#### Plots ####
 
 fr_df = lapply(functional_richness, function(x) x$mds$points)
 fr_df = purrr::map_df(fr_df, ~as.data.frame(.x), .id="id")
@@ -104,6 +103,8 @@ facet_names =
     Global = "Global"
   )
 
+# Original plot
+
 p = ggplot() + 
   geom_hex(data = transform(fr_df, family = NULL), aes(x = V1, y = V2)) + 
   geom_mark_hull(
@@ -130,6 +131,7 @@ p = ggplot() +
 # No underlying global distribution
 # Add global as a new facet
 # make the green greyscale 
+
 global_df = fr_df
 global_df$family = "Global"
 fr_df_global = fr_df %>% 

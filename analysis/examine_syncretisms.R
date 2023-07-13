@@ -74,7 +74,7 @@ f_counts = table(fathernuncle_structures$structures$papuan)
 
 p_father = make_proportionplot(
   plot_long_father,
-  "Father & Uncles",
+  "Father & Nuncles",
   labels = c("F = FB = MB", "F = FB ≠ MB",
              "F ≠ FB = MB", "F ≠ FB ≠ MB"),
   counts = paste("Non-Papuan = ", f_counts[1], "\nPapuan = ", f_counts[2], sep = "")
