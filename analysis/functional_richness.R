@@ -61,6 +61,9 @@ ignore_languages =
 # Load Papuan language data
 papuan_languages = read.csv('processed_data/papuan_languages.csv')
 
+# Put Papuan fixed up family names as the Kinbank family names 
+kinbank_languages$Family[match(papuan_languages$ID, kinbank_languages$ID)] = papuan_languages$Family
+
 # Calculate functional richness
 structural_vectors = sapply(structural_vectors, function(x) x[!rownames(x) %in% ignore_languages,])
 
@@ -82,63 +85,17 @@ fr_df = fr_df %>%
     Family == "Austronesian" ~ "Austronesian",
     Family == "Pama-Nyungan" ~ "Pama-Nyungan",
     Language_ID %in% papuan_languages$ID ~ "Papuan"
-  )))
-
-
-fr_df$family = factor(fr_df$family, 
-                        levels = c("Papuan", "Austronesian", "Indo-European",
-                                   "Pama-Nyungan"))
-
-concavity = 20
-
-facet_names = 
-  c(
-    parentsandsibs_vectors.csv = "Parents &\n Parent's Siblings",
-    sibling_vectors.csv = "Siblings",
-    sibsandcousins_vectors.csv = "Siblings & Cousins", 
-    "Indo-European" = "Indo-European",
-    "Austronesian" = "Austronesian",
-    "Pama-Nyungan" = "Pama-Nyungan",
-    Papuan = "Papuan",
-    Global = "Global"
-  )
-
-# Original plot
-
-p = ggplot() + 
-  geom_hex(data = transform(fr_df, family = NULL), aes(x = V1, y = V2)) + 
-  geom_mark_hull(
-    data = fr_df,
-    aes(x = V1, y = V2),
-    concavity = concavity,
-    color = "NA",
-    fill = "#cae6d3",
-    alpha = 0.5,
-    expand = unit(2, "mm"),
-    radius = unit(2, "mm")
-  ) + geom_jitter(data = fr_df[!is.na(fr_df$family),], aes(x = V1, y = V2),  
-                  shape = 21, size = 2, height = 1, width = 1,
-                  col = "black", fill = 'white') + 
-  scale_fill_continuous(low = "gray85", high = "black") +
-  theme_classic(base_size = 20) + 
-  theme(panel.border = element_rect(colour = "black", fill=NA, size = 1),
-        legend.position = "none") + 
-  xlab(element_blank()) + 
-  ylab(element_blank()) + 
-  facet_wrap(~id + family, drop = T, labeller = as_labeller(facet_names), ncol = 5, scales = "free")
-
-## Simon's suggested changes
-# No underlying global distribution
-# Add global as a new facet
-# make the green greyscale 
+  ))) %>% 
+  select(id, V1, V2, Language_ID, Name, Family, family)
 
 global_df = fr_df
 global_df$family = "Global"
+global_df$Family = "Global"
 fr_df_global = fr_df %>% 
   filter(!is.na(family)) %>% 
   rbind(., global_df)
 
-any(is.na(fr_df_global$family)) == FALSE
+any(is.na(fr_df_global$family) == TRUE)
 
 # axis limits
 fr_df_global = fr_df_global %>%
@@ -148,35 +105,121 @@ fr_df_global = fr_df_global %>%
          xmax = max(V1),
          xmin = min(V1))
 
+
+## Extra facet
+fr_df_global$family[fr_df_global$family == "Papuan" & fr_df_global$Family %in% c("Yam", "Timor-Alor-Pantar", "Sepik", "North Halmahera")] =
+  "Papuan: Other Families"
+fr_df_global$family[fr_df_global$family == "Papuan" & fr_df_global$Family == "Nuclear Trans New Guinea"] =
+  "Papuan: N. TNG"
+
+# relabel some columns because I am finding it confusing as is. 
+fr_df_global$facet = fr_df_global$family
+fr_df_global = fr_df_global %>% select(-family)
+
+fr_df_global$within_facets = fr_df_global$Family
+fr_df_global = fr_df_global %>% select(-Family)
+
+
+
+# remove other papuan languages for now
+fr_df_global %>% filter(facet == "Papuan") %>% group_by(Language_ID) %>% slice(1) %>% ungroup() %>% summarise(n()) # 50 languages
+fr_df_global = fr_df_global %>% filter(facet != "Papuan")
+
+table(fr_df_global$facet, fr_df_global$within_facets)
+
 # order facets
 fr_df_global$family = factor(fr_df_global$family, 
-                             levels = c("Global", "Papuan", "Austronesian", 
+                             levels = c("Global", "Papuan: N. TNG", "Papuan: Other Families", "Austronesian", 
                                         "Pama-Nyungan", "Indo-European"))
+
+## Highlight
+fr_df_kly = fr_df_global[fr_df_global$Name == "Kala Lagaw Ya",] 
+
+# Arguments to make the graph pretty
+concavity = 20
+facet_names = 
+  c(
+    parentsandsibs_vectors.csv = "Parents &\n Parent's Siblings",
+    sibling_vectors.csv = "Siblings",
+    sibsandcousins_vectors.csv = "Siblings & Cousins", 
+    "Indo-European" = "Indo-European",
+    "Austronesian" = "Austronesian",
+    "Pama-Nyungan" = "Pama-Nyungan",
+    "Papuan: N. TNG" = "Papuan: N. TNG",
+    "Papuan: Other Families" = "Papuan: Other Families",
+    Global = "Global"
+  )
 
 p = ggplot(data = fr_df_global) + 
   geom_mark_hull(
-    aes(x = V1, y = V2),
+    aes(x = V1, y = V2, fill = Family),
     concavity = concavity,
     color = "NA",
-    fill = "gray85",
+    # fill = "gray85",
     alpha = 0.5,
     expand = unit(2, "mm"),
     radius = unit(2, "mm")
   ) + geom_jitter(data = fr_df_global, aes(x = V1, y = V2),  
                   shape = 21, size = 2, height = 1, width = 1,
                   col = "black", fill = 'white') +
+  # geom_label(data = fr_df_kly, 
+  #           aes(x = V1, y = V2), 
+  #           label = "Kala Lagaw Ya",
+  #           vjust = 1.5, size = 2.5) + # this adds a label for the red point
   theme_classic(base_size = 20) + 
   theme(panel.border = element_rect(colour = "black", fill=NA, size = 1),
         legend.position = "none") + 
   xlab(element_blank()) + 
   ylab(element_blank()) + 
-  facet_wrap(~id + family, drop = T, labeller = as_labeller(facet_names), ncol = 5, scales = "free") + 
+  face_wrap(~fct_relevel(id, "Global", after = Inf)
+  facet_wrap(~id + family, drop = T, labeller = as_labeller(facet_names), ncol = 6, scales = "free") + 
   geom_blank(aes(y = ymin)) + geom_blank(aes(y = ymax)) +
   geom_blank(aes(x = xmin)) + geom_blank(aes(x = xmax)) 
 
 ## table of FR
 # lapply(fr, function(x) cbind(x[,1], round(x[,2], 2)))
+## Save main plot
 ggsave(plot = p, filename = "design_space_mds_woOutliers.png", height = 290, width = 380, units = "mm")
 
 fr_csv = purrr::map_df(fr_scores, ~as.data.frame(.x), .id="id")
 write.csv(fr_csv, "results/mds_functionalrichness.csv", row.names = FALSE)
+
+#### Within-Papuan language family variability #### 
+fr_papuan = fr_df_global[fr_df_global$family == "Papuan",]
+
+xx = data.frame(table(fr_papuan$Family, fr_papuan$id))
+xx[xx$Freq >= 4,] %>% View()
+
+fr_papuan$Language_Family = fr_papuan$Family
+
+hull_df = fr_papuan[fr_papuan$Family %in% c("Yam", "Timor-Alor-Pantar", "Sepik", "North Halmahera"),]
+
+hull_df2 = hull_df[hull_df$id == "parentsandsibs_vectors.csv",]
+
+ggplot(data = hull_df2,
+       aes(x = V1, y = V2, group = Language_Family)) + 
+  geom_mark_hull() +
+  geom_point(data = hull_df[hull_df$id == "parentsandsibs_vectors.csv", ], aes(x = V1, y = V2, shape = Language_Family)) 
+
+p_papuan = ggplot(data = fr_papuan) + 
+  geom_mark_hull(
+    data = hull_df,
+    aes(x = V1, y = V2, fill = Family),
+    concavity = concavity,
+    # color = "NA",
+    alpha = 0.3,
+    expand = unit(4, "mm"),
+    radius = unit(4, "mm")) + 
+  geom_jitter(data = fr_papuan, aes(x = V1, y = V2),
+                  shape = 21, size = 2, height = 1, width = 1,
+                  col = "black", fill = 'white') +
+  theme_classic(base_size = 20) +
+  theme(panel.border = element_rect(colour = "black", fill=NA, size = 1),
+        legend.position = "right") +
+  xlab(element_blank()) +
+  ylab(element_blank()) +
+  facet_wrap(~id + family, drop = T, labeller = as_labeller(facet_names), ncol = 5, scales = "free") + 
+  geom_blank(aes(y = ymin)) + geom_blank(aes(y = ymax)) +
+  geom_blank(aes(x = xmin)) + geom_blank(aes(x = xmax)) 
+
+p_papuan

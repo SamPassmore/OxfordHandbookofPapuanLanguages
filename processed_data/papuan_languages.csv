@@ -24,7 +24,7 @@
 "p_nennenn1238","Nen","nenn1238","Nen","nqn","Papunesia",-8.62183,142.032,"Yam","Nen_nenn1238","parabank","Nen nenn1238.txt",NA,NA,"","","Parabank","Yam",26,"Nen, Yei","Yam","27",26,""
 "p_pagupagu1249","Pagu","pagu1249","Pagu","pgu","Papunesia",1.2134,127.78,"North Halmahera","Pagu_pagu1249","parabank","Pagu pagu1249.txt",NA,20170612,"Data incomplete and source word list requires interpretation","","Parabank","North Halmahera",10,"Tidore","North Halmahera","10",10,""
 "p_riantanarian1263","Riantana","rian1263","Riantana","ran","Papunesia",-7.50746,138.484,"Kolopom","Riantana_rian1263","parabank","Riantana rian1263.txt",NA,20170322,"","","Parabank","(TNG; Kolopom)",NA,"Riantana","(TNG; Kolopom)","3",3,""
-"p_rotokasroto1249","Rotokas","roto1249","Rotokas","roo","Papunesia",-5.94339,155.154,"North Bougainville","Rotokas_roto1249","parabank","Rotokas roto1249.txt",NA,20190717,"","","Parabank","North Bougainville",4,"Rotokas","North Bougainville","4",4,""
+"p_rotokasroto1249","Rotokas","roto1249","Rotokas","roo","Papunesia",-5.94339,155.154,"Bougainville","Rotokas_roto1249","parabank","Rotokas roto1249.txt",NA,20190717,"","","Parabank",NA,NA,NA,NA,NA,NA,NA
 "p_sougbmani1235","Sougb","mani1235","Sougb","mnx","Papunesia",-1.49611,133.95,"East Bird's Head","Sougb_mani1235","parabank","Sougb mani1235.txt",NA,NA,"","","Parabank","East Bird's Head",5,"Meyah","East Bird's Head","5",5,""
 "p_sukisuki1245","Suki","suki1245","Suki","sui","Papunesia",-8.04783,141.842,"Suki-Gogodala","Suki_suki1245","parabank","Suki suki1245.txt",NA,20170322,"","","Parabank","(TNG; Suki-Gogodala)",NA,"Suki","(TNG; Suki-Gogodala)","",4,""
 "p_teiwateiw1235","Teiwa","teiw1235","Teiwa","twe","Papunesia",-8.37662,124.174,"Timor-Alor-Pantar","Teiwa_teiw1235","parabank","Teiwa teiw1235.txt",NA,20170621,"","","Parabank","Timor-Alor-Pantar",25,"Abui, Teiwa, Bunaq","Timor-Alor-Pantar","25",25,""
@@ -39,10 +39,10 @@
 "p_agob-ende-kawamagob1244","Agob-Ende-Kawam","agob1244","Agob-Ende-Kawam","","Papunesia",-9.08521,142.532,"Pahoturi","Agob-Ende-Kawam_agob1244","parabank","",NA,NA,"","","","Pahoturi",5,"Idi","Pahoturi","5",5,""
 "p_alamblakalam1246","Alamblak","alam1246","Alamblak","","Papunesia",-4.66307,143.316,"Sepik","Alamblak_alam1246","parabank","",NA,NA,"","","","Sepik; Middle Sepik; Ndu",49,"Mehek, Alamblak","Sepik","45",49,""
 "p_amanabaman1265","Amanab","aman1265","Amanab","","Papunesia",-3.51516,141.178,"Border","Amanab_aman1265","parabank","",NA,NA,"","","","Border",14,"Imonda, Kilmeri","Border","14",14,""
-"p_auauuu1241","Au","auuu1241","Au","","Papunesia",-3.53277,142.105,"Nuclear Torricelli","Au_auuu1241","parabank","",NA,NA,"","","","Torricelli",50,"Arapesh, Srenge, Yeri","Torricelli","50",50,"Nuclear Torricelli"
+"p_auauuu1241","Au","auuu1241","Au","","Papunesia",-3.53277,142.105,"Torricelli","Au_auuu1241","parabank","",NA,NA,"","","",NA,NA,NA,NA,NA,NA,NA
 "p_imbonguimbo1238","Imbongu","imbo1238","Imbongu","","Papunesia",-6.13629,144.026,"Nuclear Trans New Guinea","Awa_imbo1238","parabank","",NA,NA,"","","","TNG",431,"**","TNG","431",431,"Nuclear Trans New Guinea"
 "p_baruyabaru1267","Baruya","baru1267","Baruya","","Papunesia",-6.89261,145.818,"Angan","Baruya_baru1267","parabank","",NA,NA,"","","","(TNG; Angan)",13,"Menya","(TNG; Angan)","13",13,""
-"p_berikberi1254","Berik","beri1254","Berik","","Papunesia",-2.26904,138.866,"Tor-Orya","Berik_beri1254","parabank","",NA,NA,"","","","(Tor-Orya)",NA,"Tor, Berik","Tor-Kwerba","",13,""
+"p_berikberi1254","Berik","beri1254","Berik","","Papunesia",-2.26904,138.866,"Tor-Kwerba","Berik_beri1254","parabank","",NA,NA,"","","",NA,NA,NA,NA,NA,NA,NA
 "p_biluabilu1245","Bilua","bilu1245","Bilua","","Papunesia",-7.92388,156.663,"Bilua","Bilua_bilu1245","parabank","",NA,NA,"","","","Bilua",1,"Bilua","(Central Solomons; Bilua)","4",1,""
 "p_dadibidadi1250","Dadibi","dadi1250","Dadibi","","Papunesia",-6.65765,144.511,"Teberan","Daribi_dadi1250","parabank","",NA,NA,"","","","Teberan",2,"Folopa","Teberan","2",2,""
 "p_doutaidout1240","Doutai","dout1240","Doutai","","Papunesia",-3.24832,138.22,"Lakes Plain","Doutai_dout1240","parabank","",NA,NA,"","","","Lakes Plain",20,"Iau, Abawiri","Lakes Plain","20",20,""
@@ -60,7 +60,7 @@
 "p_hulihuli1244","Huli","huli1244","Huli","","Papunesia",-5.97212,142.963,"Nuclear Trans New Guinea","Huli_huli1244","parabank","",NA,NA,"","","","TNG",431,"**","TNG","431",431,"Nuclear Trans New Guinea"
 "p_isakakris1246","I'saka","kris1246","I'saka","","Papunesia",-2.80084,141.303,"Sko","I'saka_(Krisa)_kris1246","parabank","",NA,NA,"","","","Sko",13,"Dusø","Sko","13",13,""
 "p_iauiauu1242","Iau","iauu1242","Iau","","Papunesia",-3.14537,137.69,"Lakes Plain","Iau_iauu1242","parabank","",NA,NA,"","","","Lakes Plain",20,"Iau, Abawiri","Lakes Plain","20",20,""
-"p_isirawaisir1237","Isirawa","isir1237","Isirawa","","Papunesia",-1.88775,138.595,"Greater Kwerba","Isirawa_isir1237","parabank","",NA,NA,"","","","Tor-Kwerba",23,"Kwerba","Kwerba","23",23,""
+"p_isirawaisir1237","Isirawa","isir1237","Isirawa","","Papunesia",-1.88775,138.595,"Tor-Kwerba","Isirawa_isir1237","parabank","",NA,NA,"","","",NA,NA,NA,NA,NA,NA,NA
 "p_iwamiwam1256","Iwam","iwam1256","Iwam","","Papunesia",-4.27346,141.817,"Sepik","Iwam_iwam1256","parabank","",NA,NA,"","","","Sepik; Middle Sepik; Ndu",49,"Mehek, Alamblak","Sepik","45",49,""
 "p_kamanokama1370","Kamano","kama1370","Kamano","","Papunesia",-6.25829,145.728,"Nuclear Trans New Guinea","Kamano_kama1370","parabank","",NA,NA,"","","","TNG",431,"**","TNG","431",431,"Nuclear Trans New Guinea"
 "p_kaurenaraukaur1271","Kaure-Narau","kaur1271","Kaure-Narau","","Papunesia",-3.39188,140.14,"Kaure-Narau","Kaure_kaur1271","parabank","",NA,NA,"","","","Kaure",NA,NA,NA,NA,NA,NA
@@ -85,9 +85,9 @@
 "p_mianimian1254","Miani","mian1254","Miani","","Papunesia",-4.42116,145.276,"Nuclear Trans New Guinea","Miani_mian1254","parabank","",NA,NA,"","","","TNG",431,"**","TNG","431",431,"Nuclear Trans New Guinea"
 "p_momufasfass1245","Momu-Fas","fass1245","Momu-Fas","","Papunesia",-3.10868,141.64,"Baibai-Fas","Momu-Fas_fass1245","parabank","",NA,NA,"","","","Baibai-Fas",2,"Momu","(Kwomtari; Baibai-Fas)","",2,""
 "p_monimoni1261","Moni","moni1261","Moni","","Papunesia",-3.72962,136.886,"Nuclear Trans New Guinea","Moni_moni1261","parabank","",NA,NA,"","","","TNG",431,"**","TNG","431",431,"Nuclear Trans New Guinea"
-"p_monumbonucl1458","Monumbo","nucl1458","Monumbo","","Papunesia",-4.2717,144.95,"Bogia","Monumbo_nucl1458","parabank","",NA,NA,"","","","Bogia",1,"Bogia","(Torricelli; Bogia)","50",1,""
-"p_sibesibe1248","Sibe","sibe1248","Sibe (Nasioi)","","Papunesia",-6.43149,155.412,"South Bougainville","Nagovisi_sibe1248","parabank","",NA,NA,"","","","South Bougainville",4,"Uisai, Nagovisi","South Bougainville","4",4,""
-"p_naasioinaas1242","Naasioi","naas1242","Naasioi","","Papunesia",-6.46022,155.632,"South Bougainville","Nasioi_naas1242","parabank","",NA,NA,"","","","South Bougainville",4,"Uisai, Nagovisi","South Bougainville","4",4,""
+"p_monumbonucl1458","Monumbo","nucl1458","Monumbo","","Papunesia",-4.2717,144.95,"Torricelli","Monumbo_nucl1458","parabank","",NA,NA,"","","",NA,NA,NA,NA,NA,NA,NA
+"p_sibesibe1248","Sibe","sibe1248","Sibe (Nasioi)","","Papunesia",-6.43149,155.412,"Bougainville","Nagovisi_sibe1248","parabank","",NA,NA,"","","",NA,NA,NA,NA,NA,NA,NA
+"p_naasioinaas1242","Naasioi","naas1242","Naasioi","","Papunesia",-6.46022,155.632,"Bougainville","Nasioi_naas1242","parabank","",NA,NA,"","","",NA,NA,NA,NA,NA,NA,NA
 "p_yagwoiayagw1240","Yagwoia","yagw1240","Yagwoia","","Papunesia",-7.14042,145.854,"Angan","Negwa_(Yagwoia)_yagw1240","parabank","",NA,NA,"","","","(TNG; Angan)",13,"Menya","(TNG; Angan)","13",13,""
 "p_nimborannucl1633","Nimboran","nucl1633","Nimboran","","Papunesia",-2.5803,140.179,"Nimboranic","Nimboran_nucl1633","parabank","",NA,NA,"","","","Nimboran",5,"Nimboran","Nimboran","5",5,""
 "p_northmuyunort2916","North Muyu","nort2916","North Muyu","","Papunesia",-5.55319,140.84,"Nuclear Trans New Guinea","NorthMuyu_nort2916","parabank","",NA,NA,"","","","TNG",431,"**","TNG","431",431,"Nuclear Trans New Guinea"
@@ -97,7 +97,7 @@
 "p_savosavosavo1255","Savosavo","savo1255","Savosavo","","Papunesia",-9.12853,159.814,"Savosavo","Savosavo_savo1255","parabank","",NA,NA,"","","","Savosavo",1,"Savosavo","(Central Solomons, Savosavo)","4",1,""
 "p_sawisawi1257","Sawi","sawi1257","Sawi","","Papunesia",-5.99286,138.643,"Nuclear Trans New Guinea","Sawi_sawi1257","parabank","",NA,NA,"","","","TNG",431,"**","TNG","431",431,"Nuclear Trans New Guinea"
 "p_setamanseta1246","Setaman","seta1246","Setaman","","Papunesia",-5.31134,141.833,"Nuclear Trans New Guinea","Setaman_Baktamin_seta1246","parabank","",NA,NA,"","","","TNG",431,"**","TNG","431",431,"Nuclear Trans New Guinea"
-"p_siwaisiwa1245","Siwai","siwa1245","Siwai","","Papunesia",-6.6429,155.452,"South Bougainville","Siwai_Motuna_siwa1245","parabank","",NA,NA,"","","","South Bougainville",4,"Uisai, Nagovisi","South Bougainville","4",4,""
+"p_siwaisiwa1245","Siwai","siwa1245","Siwai","","Papunesia",-6.6429,155.452,"Bougainville","Siwai_Motuna_siwa1245","parabank","",NA,NA,"","","",NA,NA,NA,NA,NA,NA,NA
 "p_tablatabl1243","Tabla","tabl1243","Tabla","","Papunesia",-2.45368,140.396,"Sentanic","Tabla_tabl1243","parabank","",NA,NA,"","","","Sentani",4,"Sentani","Sentani","4",4,""
 "p_taiaptaia1239","Taiap","taia1239","Taiap","","Papunesia",-4.05047,144.506,"Taiap","Taiap_taia1239","parabank","",NA,NA,"","","","Tayap",1,"Tayap","Tayap","1",1,""
 "p_telefoltele1256","Telefol","tele1256","Telefol","","Papunesia",-5.07444,141.731,"Nuclear Trans New Guinea","Telefol_tele1256","parabank","",NA,NA,"","","","TNG",431,"**","TNG","431",431,"Nuclear Trans New Guinea"

@@ -59,6 +59,34 @@ papuan_languages$Family[papuan_languages$ID == "p_westernpantarlamm1241"] = "Tim
 papuan_languages$Family[papuan_languages$ID == "p_wipiwipi1242"] = "Eastern Trans-Fly"
 papuan_languages$Family[papuan_languages$ID == "p_yelmekyelm1242"] = "Bulaka River"
 
+## We categorise some language families for analysis later
+# Switching from Nuclear Trans-New Guinea to Trans-New Guinea according to Pawley & Hammarstrom (2018)
+# papuan_languages$Family[papuan_languages$Family == "Nuclear Trans New Guinea"] = "Trans New Guinea"
+# papuan_languages$Family[papuan_languages$Family == "Suki-Gogodala"] = "Trans New Guinea"
+# papuan_languages$Family[papuan_languages$Family == "Timor-Alor-Pantar"] = "Trans New Guinea"
+# papuan_languages$Family[papuan_languages$Family == "Kolopom"] = "Trans New Guinea"
+# papuan_languages$Family[papuan_languages$Family == "Anim"] = "Trans New Guinea"
+# papuan_languages$Family[papuan_languages$Family == "Kiwaian"] = "Trans New Guinea"
+# papuan_languages$Family[papuan_languages$Family == "Angan"] = "Trans New Guinea"
+# papuan_languages$Family[papuan_languages$Family == "Bosavi"] = "Trans New Guinea"
+# papuan_languages$Family[papuan_languages$Family == "East Kutubu"] = "Trans New Guinea"
+# papuan_languages$Family[papuan_languages$Family == "Goilalan"] = "Trans New Guinea"
+# papuan_languages$Family[papuan_languages$Family == "Koiarian"] = "Trans New Guinea"
+# papuan_languages$Family[papuan_languages$Family == "West Bomberai"] = "Trans New Guinea"
+
+# Grouping Bougainville languages is maybe too far (but we only have data on four languages total)
+papuan_languages$Family[papuan_languages$Family == "North Bougainville"] = "Bougainville"
+papuan_languages$Family[papuan_languages$Family == "South Bougainville"] = "Bougainville"
+
+papuan_languages$Family[papuan_languages$Family == "Nuclear Torricelli"] = "Torricelli"
+papuan_languages$Family[papuan_languages$Family == "Bogia"] = "Torricelli"
+
+# Tor-Kwerba
+papuan_languages$Family[papuan_languages$Family == "Greater Kwerba"] = "Tor-Kwerba"
+papuan_languages$Family[papuan_languages$Family == "Tor-Orya"] = "Tor-Kwerba"
+
+table(papuan_languages$Family)
+
 # We want to use the oxford clade families so we add those here
 # Match languages to clades
 papuan_clades = read.csv('data/clades.csv')
