@@ -4,6 +4,7 @@ suppressPackageStartupMessages({
   library(kinbankr)
   library(dplyr)
   library(ggplot2)
+  library(ggpubr)
   library(patchwork)
   library(fastDummies)
 })
@@ -26,6 +27,17 @@ process_function = function(kin_types, papuan_languages){
   
   summary_table = table(structures$structure, structures$papuan)
   proportions = prop.table(summary_table, margin = 2)
+  
+  totals = colSums(summary_table)
+  
+  # Get chi-square test
+  chi2 = apply(summary_table, 1, chi_test_wrapper)
+  p_stars = ifelse(chi2[2,] < 0.1, "*",
+                      ifelse(chi2[2,] < 0.01, "**",
+                             ifelse(chi2[2,] < 0.001, "***", "")))
+  chi2 = rbind(chi2, p_stars)
+  rownames(chi2) = c("Chi-square", "p-value", "p-star") 
+  
   # order by papuan proportions
   proportions = proportions[order(proportions[,2], decreasing = TRUE),]
   
@@ -33,14 +45,14 @@ process_function = function(kin_types, papuan_languages){
                            `Non-Papuan` = round(proportions[,1], 4),
                            Papuan = round(proportions[,2], 4))
   
-  list(summary = proportions, structures = structures)
+  list(summary = proportions, structures = structures, chi2 = chi2)
 }
 
 make_proportionplot = function(data, title, labels, counts){
   data$name = gsub(x = data$name, pattern = "\\.", replacement = "-")
   
-  ggplot(data = data, aes(x = structure, fill = name, y = value)) + 
-    geom_bar(stat="identity", position = "dodge") + 
+  ggplot(data = data, aes(x = structure, y = value)) + 
+    geom_bar(aes(fill = name), stat="identity", position = "dodge") + 
     ylim(c(0, 0.6)) + 
     ggtitle(title) + 
     xlab(element_blank()) + 
@@ -51,6 +63,12 @@ make_proportionplot = function(data, title, labels, counts){
     annotate("label", x = 4.5, y=0.55, label = counts, hjust = 1, label.r = unit(0, "pt")) +
     theme(legend.title=element_blank())
 }
+
+chi_test_wrapper = function(summary_table){
+  c2 = chisq.test(rbind(summary_table, totals - summary_table), simulate.p.value = TRUE)
+  c(c2$statistic, c2$p.value)
+}
+  
 
 # Parent / Nuncle males
 ## F = FB = MB
@@ -72,13 +90,24 @@ plot_long_father = plot_long_father %>%
 
 f_counts = table(fathernuncle_structures$structures$papuan)
 
+chi_father = fathernuncle_structures$chi2["p-star",]
+
 p_father = make_proportionplot(
   plot_long_father,
   "Father & Nuncles",
   labels = c("F = FB = MB", "F = FB ≠ MB",
              "F ≠ FB = MB", "F ≠ FB ≠ MB"),
-  counts = paste("Non-Papuan = ", f_counts[1], "\nPapuan = ", f_counts[2], sep = "")
-)
+  counts = paste("Non-Papuan = ", f_counts[1], "\nPapuan = ", f_counts[2], sep = "")) + 
+  ggpubr::geom_bracket(
+    xmin = 1.75, xmax = 2.25,
+    y.position = 0.6, label = chi_father["112"],
+    tip.length = 0.04
+  ) +
+  ggpubr::geom_bracket(
+    xmin = 2.75, xmax = 3.25,
+    y.position = 0.34, label = chi_father["122"],
+    tip.length = 0.04
+  )
 
 ## Modelling 
 df = fathernuncle_structures$structures
@@ -102,13 +131,25 @@ plot_long_mother = plot_long_mother %>%
 
 m_counts = paste(table(aunt_structures$structures$papuan), collapse = "\n")
 
+chi_mother = aunt_structures$chi2["p-star",]
+
 p_mother = make_proportionplot(
   plot_long_mother,
   "Mother & Aunts",
   labels = c("M = MZ = FZ", "M = MZ ≠ FZ",
              "M ≠ MZ = FZ", "M ≠ MZ ≠ FZ"),
   counts = m_counts
-)
+) +
+  ggpubr::geom_bracket(
+    xmin = 1.75, xmax = 2.25,
+    y.position = 0.51, label = chi_mother["112"],
+    tip.length = 0.04
+  ) +
+  ggpubr::geom_bracket(
+    xmin = 2.75, xmax = 3.25,
+    y.position = 0.38, label = chi_mother["122"],
+    tip.length = 0.04
+  )
 
 # Cousins
 cousin_types = c("meB", "mFBeS", "mFZeS")
@@ -125,13 +166,25 @@ plot_long_cousinM = plot_long_cousinM %>%
 
 cm_counts = paste(table(cousinM_structures$structures$papuan), collapse = "\n")
 
+chi_cmM = cousinM_structures$chi2["p-star",]
+
 p_cousinM = make_proportionplot(
   plot_long_cousinM,
   "Brother & Male cousins",
   labels = c("B = FBS = MBS", "B = FBS ≠ MBS",
              "B ≠ FBS = MBS", "B ≠ FBS ≠ MBS"),
   counts = cm_counts
-)
+) + ylim(c(0, 0.67)) +
+  ggpubr::geom_bracket(
+    xmin = 1.75, xmax = 2.25,
+    y.position = 0.65, label = chi_cmM["112"],
+    tip.length = 0.04
+  ) +
+  ggpubr::geom_bracket(
+    xmin = 2.75, xmax = 3.25,
+    y.position = 0.52, label = chi_cmM["122"],
+    tip.length = 0.04
+  )
 
 # Female cousins
 cousin_types = c("meZ", "mMZeD", "mFZeD")
@@ -147,13 +200,25 @@ plot_long_cousinF = plot_long_cousinF %>%
 
 cf_counts = paste(table(cousinF_structures$structures$papuan), collapse = "\n")
 
+chi_cmF = cousinF_structures$chi2["p-star",]
+
 p_cousinF = make_proportionplot(
   plot_long_cousinF,
   "Sister & Female cousins",
   labels = c("Z = MZD = FZD", "Z = MZD ≠ FZD",
              "Z ≠ MZD = FZD", "Z ≠ MZD ≠ FZD"),
   counts = cf_counts
-)
+)  +
+  ggpubr::geom_bracket(
+    xmin = 1.75, xmax = 2.25,
+    y.position = 0.49, label = chi_cmF["112"],
+    tip.length = 0.04
+  ) +
+  ggpubr::geom_bracket(
+    xmin = 2.75, xmax = 3.25,
+    y.position = 0.533, label = chi_cmF["122"],
+    tip.length = 0.04
+  )
 
 
 ## Other notable differences 
@@ -186,11 +251,6 @@ sibling_pap = left_join(sibling_structures$structures[sibling_structures$structu
                         by = c("Language_ID" = "ID")) %>% 
   filter(structure %in% c(1111, 1233))
 
-table(sibling_pap$structure)
-
-ggplot(sibling_pap, aes(x = Latitude, y = Longitude, col = Clade_EF)) + 
-  geom_point()
-
 ## Statistical test
 df = sibling_structures$structures
 df$is_1111 = ifelse(df$structure == 1111, 1, 0)
@@ -216,9 +276,6 @@ grandM_pap = left_join(grandM_structures$structures[grandM_structures$structures
   filter(structure == 1111)
 
 table(grandM_pap$structure, grandM_pap$Clade_EF)
-
-ggplot(grandM_pap, aes(x = Latitude, y = Longitude, col = Clade_EF)) + 
-  geom_point()
 
 grandF_types = c("mFM", "mMM", "mSD", "mDD")
 grandF_structures = process_function(grandF_types, papuan_languages = papuan_languages)
@@ -253,9 +310,8 @@ gf_counts = paste(table(grandF_structures$structures$papuan), collapse = "\n")
 
 interesting_df$name = gsub(x = interesting_df$name, pattern = "\\.", replacement = "-")
 
-
-p_interesting = ggplot(data = interesting_df, aes(x = structure.pretty, fill = name, y = value)) + 
-  geom_bar(stat="identity", position = "dodge") + 
+p_interesting = ggplot(data = interesting_df, aes(x = structure.pretty, y = value)) + 
+  geom_bar(aes(fill = name), stat="identity", position = "dodge") + 
   ylim(c(0, 0.6)) + 
   ggtitle("Other features") + 
   xlab(element_blank()) + 
@@ -271,7 +327,32 @@ p_interesting = ggplot(data = interesting_df, aes(x = structure.pretty, fill = n
   annotate("label", x = 5.4, y=0.42, label = om_counts, hjust = 1, label.r = unit(0, "pt")) +
   geom_vline(xintercept = 2.5) + 
   geom_vline(xintercept = 4.5) + 
-  theme(legend.title=element_blank())
+  theme(legend.title=element_blank()) +
+  ggpubr::geom_bracket(
+    xmin = .75, xmax = 1.25,
+    y.position = 0.328, label = sibling_structures$chi2[3,"1233"],
+    tip.length = 0.04
+  ) +
+  ggpubr::geom_bracket(
+    xmin = 1.75, xmax = 2.25,
+    y.position = 0.189, label = sibling_structures$chi2[3,"1111"],
+    tip.length = 0.04
+  ) +
+  ggpubr::geom_bracket(
+    xmin = 2.75, xmax = 3.25,
+    y.position = 0.411, label = grandM_structures$chi2[3,"1111"],
+    tip.length = 0.04
+  ) +
+  ggpubr::geom_bracket(
+    xmin = 3.75, xmax = 4.25,
+    y.position = 0.352, label = grandF_structures$chi2[3,"1111"],
+    tip.length = 0.04
+  ) +
+  ggpubr::geom_bracket(
+    xmin = 4.75, xmax = 5.25,
+    y.position = 0.212, label = omaha_structures$chi2[3,"1111"],
+    tip.length = 0.04
+  )
 
 # Frequency graphs
 (p_father + p_mother) / (p_cousinM + p_cousinF) / p_interesting +

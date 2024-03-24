@@ -3,6 +3,7 @@ suppressPackageStartupMessages({
   library(ggplot2)
   library(fundiversity)
   library(ggforce)
+  library(ggpattern)
 })
 
 get_fr = function(structures, metric, dim){
@@ -119,27 +120,33 @@ fr_df_global = fr_df_global %>% select(-family)
 fr_df_global$within_facets = fr_df_global$Family
 fr_df_global = fr_df_global %>% select(-Family)
 
-
-
 # remove other papuan languages for now
 fr_df_global %>% filter(facet == "Papuan") %>% group_by(Language_ID) %>% slice(1) %>% ungroup() %>% summarise(n()) # 50 languages
 fr_df_global = fr_df_global %>% filter(facet != "Papuan")
 
 table(fr_df_global$facet, fr_df_global$within_facets)
 
-# order facets
-fr_df_global$family = factor(fr_df_global$family, 
-                             levels = c("Global", "Papuan: N. TNG", "Papuan: Other Families", "Austronesian", 
-                                        "Pama-Nyungan", "Indo-European"))
+## make an additional hull for P-N without Kala Yagwa La
+tmp = fr_df_global %>% 
+  filter(Name != "Kala Lagaw Ya" & facet == "Pama-Nyungan")
+tmp$within_facets = "Pama-Nyungan w/o KLY"
+fr_df_global = rbind(fr_df_global, tmp)
 
 ## Highlight
-fr_df_kly = fr_df_global[fr_df_global$Name == "Kala Lagaw Ya",] 
+fr_df_kly = fr_df_global %>% 
+  filter(Name == "Kala Lagaw Ya" & facet == "Pama-Nyungan")
+
+# order facets
+fr_df_global$facet = factor(fr_df_global$facet, 
+                            levels = c("Global", "Papuan: N. TNG", "Papuan: Other Families", "Austronesian", 
+                                       "Pama-Nyungan", "Indo-European"))
+
 
 # Arguments to make the graph pretty
 concavity = 20
 facet_names = 
   c(
-    parentsandsibs_vectors.csv = "Parents &\n Parent's Siblings",
+    parentsandsibs_vectors.csv = "Parents & Parent's Siblings",
     sibling_vectors.csv = "Siblings",
     sibsandcousins_vectors.csv = "Siblings & Cousins", 
     "Indo-European" = "Indo-European",
@@ -151,35 +158,37 @@ facet_names =
   )
 
 p = ggplot(data = fr_df_global) + 
+  geom_point(data = transform(fr_df_global, facet = NULL), aes(x = V1, y = V2), alpha = 0.1) +
   geom_mark_hull(
-    aes(x = V1, y = V2, fill = Family),
+    data = fr_df_global,
+    aes(x = V1, y = V2, fill = factor(within_facets)),
     concavity = concavity,
-    color = "NA",
+    color = "black",
     # fill = "gray85",
     alpha = 0.5,
     expand = unit(2, "mm"),
-    radius = unit(2, "mm")
-  ) + geom_jitter(data = fr_df_global, aes(x = V1, y = V2),  
+    radius = unit(2, "mm")) +
+  geom_jitter(data = fr_df_global, aes(x = V1, y = V2),
                   shape = 21, size = 2, height = 1, width = 1,
                   col = "black", fill = 'white') +
-  # geom_label(data = fr_df_kly, 
-  #           aes(x = V1, y = V2), 
-  #           label = "Kala Lagaw Ya",
-  #           vjust = 1.5, size = 2.5) + # this adds a label for the red point
-  theme_classic(base_size = 20) + 
+  geom_label(data = fr_df_kly,
+            aes(x = V1, y = V2),
+            label = "Kala Lagaw Ya",
+            vjust = 1.5, size = 2.5) + # this adds a label for KLY
+  xlab(element_blank()) +
+  ylab(element_blank()) +
+  facet_wrap(~factor(facet) + id, drop = T, labeller = as_labeller(facet_names), ncol = 3, shrink = TRUE, scales = "free") + 
+  theme_classic(base_size = 12) +
   theme(panel.border = element_rect(colour = "black", fill=NA, size = 1),
-        legend.position = "none") + 
-  xlab(element_blank()) + 
-  ylab(element_blank()) + 
-  face_wrap(~fct_relevel(id, "Global", after = Inf)
-  facet_wrap(~id + family, drop = T, labeller = as_labeller(facet_names), ncol = 6, scales = "free") + 
+        legend.position = "bottom", legend.title = element_blank()) +
   geom_blank(aes(y = ymin)) + geom_blank(aes(y = ymax)) +
   geom_blank(aes(x = xmin)) + geom_blank(aes(x = xmax)) 
 
+#p
 ## table of FR
 # lapply(fr, function(x) cbind(x[,1], round(x[,2], 2)))
 ## Save main plot
-ggsave(plot = p, filename = "design_space_mds_woOutliers.png", height = 290, width = 380, units = "mm")
+ggsave(plot = p, filename = "design_space_mds_woOutliers.pdf", height = 297, width = 210, units = "mm")
 
 fr_csv = purrr::map_df(fr_scores, ~as.data.frame(.x), .id="id")
 write.csv(fr_csv, "results/mds_functionalrichness.csv", row.names = FALSE)
