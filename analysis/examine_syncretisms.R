@@ -16,7 +16,7 @@ data("languages")
 ## functions
 process_function = function(kin_types, papuan_languages){
   # get vectors
-  structural_vectors = kinbankr::get_structural_vectors(kin_types, duplicates ="any", method = "binary")
+  structural_vectors = kinbankr::get_structural_vectors(kin_types, duplicates ="random", method = "binary")
   
   # Revert to structures
   structures = t(apply(structural_vectors, 1, function(f) kinbankr::revert_vector(unlist(f), nmes = kin_types)))
@@ -31,7 +31,7 @@ process_function = function(kin_types, papuan_languages){
   totals = colSums(summary_table)
   
   # Get chi-square test
-  chi2 = apply(summary_table, 1, chi_test_wrapper)
+  chi2 = apply(summary_table, 1, chi_test_wrapper, totals = totals)
   p_stars = ifelse(chi2[2,] < 0.1, "*",
                       ifelse(chi2[2,] < 0.01, "**",
                              ifelse(chi2[2,] < 0.001, "***", "")))
@@ -64,7 +64,7 @@ make_proportionplot = function(data, title, labels, counts){
     theme(legend.title=element_blank())
 }
 
-chi_test_wrapper = function(summary_table){
+chi_test_wrapper = function(summary_table, totals){
   c2 = chisq.test(rbind(summary_table, totals - summary_table), simulate.p.value = TRUE)
   c(c2$statistic, c2$p.value)
 }
@@ -94,7 +94,7 @@ chi_father = fathernuncle_structures$chi2["p-star",]
 
 p_father = make_proportionplot(
   plot_long_father,
-  "Father & Nuncles",
+  "Father & Uncles",
   labels = c("F = FB = MB", "F = FB ≠ MB",
              "F ≠ FB = MB", "F ≠ FB ≠ MB"),
   counts = paste("Non-Papuan = ", f_counts[1], "\nPapuan = ", f_counts[2], sep = "")) + 
@@ -244,12 +244,12 @@ plot_sibs_long = pivot_longer(plot_sibs, cols = !structure)
 
 plot_sibs_long = plot_sibs_long %>% 
   filter(value != 0) %>% 
-  filter(structure %in% c(1111, 1233))
+  filter(structure %in% c(1233))
 
 # Papuan families
 sibling_pap = left_join(sibling_structures$structures[sibling_structures$structures$papuan == 1,], papuan_languages,
                         by = c("Language_ID" = "ID")) %>% 
-  filter(structure %in% c(1111, 1233))
+  filter(structure %in% c(1233))
 
 ## Statistical test
 df = sibling_structures$structures
