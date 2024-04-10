@@ -1,10 +1,16 @@
 ## This script will build all analyses used in section 3.1 of Chapter 40 in the 
 ## Oxford Handbook of Papuan Languages 
 
-## This script will require that the Kinbank submodule is activated 
-## before running. To initiliase the
+## This script requires the Kinbank submodule is activated before running. 
+## To initialize the submodule you can use the commented command below. 
+## This only needs to be performed once. 
 
-# 1. Identify all Papuan languages & Get descriptives
+# system("git submodule init; git submodule update")
+
+## The scripts below are listed in running order. I have indicated where 
+## particular figures or tables are created. 
+
+# 1. Identify all Papuan languages in Kinbank & calculate some descriptive statistics
 system("Rscript processing/get_papuanlanguages.R")
 
 # 2. Get structural vectors of the Papuan and other languages

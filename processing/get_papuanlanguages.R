@@ -1,29 +1,32 @@
 # This script will get all Papuan languages in Kinbank
-library(dplyr)
+suppressPackageStartupMessages({
+  library(dplyr)  
+})
 
+# Load kinbank data
 kinbank_languages = read.csv('submodules/kinbank/cldf/languages.csv')
 
-# square off languages in New Guinea
+# Coordinates for New Guinea Map
 lat_min = -15
 lat_max = 5.1
 long_min = 120
 long_max = 170
 
-
+## Subset to langauges that are "Papuan"
 papuan_languages = kinbank_languages %>% 
   dplyr::filter(Longitude > long_min & Longitude < long_max & # Only Languages within the New Guinea Square
                   Latitude > lat_min & Latitude < lat_max) %>% 
   dplyr::filter(!Family %in% c("Austronesian", "Pama-Nyungan", "Indo-European")) %>% # Not Austronesian or Pama-Nyungan langauges
   dplyr::filter(Macroarea == "Papunesia" | Macroarea == "") # Not languages in Australia
 
-# manually add kora1295 (have made this change in the original set Parabank)
+# manually add kora1295
 papuan_languages = rbind(papuan_languages, kinbank_languages[kinbank_languages$Glottocode == "kora1295",])
 # manually add lat long
 papuan_languages$Latitude[papuan_languages$Glottocode == "kora1295"] = -9.07
 papuan_languages$Longitude[papuan_languages$Glottocode == "kora1295"] = 149.267
 
-## Some languages have no language family. We put those in here:
-# View(papuan_languages %>% filter(Family == ""))
+## Some languages have no language family in the database, but they should.
+## I add them here. 
 # If a language is on its own - then we name the family Isolate. 
 
 papuan_languages$Family[papuan_languages$ID == "p_abuiabui1241"] = "Timor-Alor-Pantar"
@@ -59,21 +62,6 @@ papuan_languages$Family[papuan_languages$ID == "p_westernpantarlamm1241"] = "Tim
 papuan_languages$Family[papuan_languages$ID == "p_wipiwipi1242"] = "Eastern Trans-Fly"
 papuan_languages$Family[papuan_languages$ID == "p_yelmekyelm1242"] = "Bulaka River"
 
-## We categorise some language families for analysis later
-# Switching from Nuclear Trans-New Guinea to Trans-New Guinea according to Pawley & Hammarstrom (2018)
-# papuan_languages$Family[papuan_languages$Family == "Nuclear Trans New Guinea"] = "Trans New Guinea"
-# papuan_languages$Family[papuan_languages$Family == "Suki-Gogodala"] = "Trans New Guinea"
-# papuan_languages$Family[papuan_languages$Family == "Timor-Alor-Pantar"] = "Trans New Guinea"
-# papuan_languages$Family[papuan_languages$Family == "Kolopom"] = "Trans New Guinea"
-# papuan_languages$Family[papuan_languages$Family == "Anim"] = "Trans New Guinea"
-# papuan_languages$Family[papuan_languages$Family == "Kiwaian"] = "Trans New Guinea"
-# papuan_languages$Family[papuan_languages$Family == "Angan"] = "Trans New Guinea"
-# papuan_languages$Family[papuan_languages$Family == "Bosavi"] = "Trans New Guinea"
-# papuan_languages$Family[papuan_languages$Family == "East Kutubu"] = "Trans New Guinea"
-# papuan_languages$Family[papuan_languages$Family == "Goilalan"] = "Trans New Guinea"
-# papuan_languages$Family[papuan_languages$Family == "Koiarian"] = "Trans New Guinea"
-# papuan_languages$Family[papuan_languages$Family == "West Bomberai"] = "Trans New Guinea"
-
 # Grouping Bougainville languages is maybe too far (but we only have data on four languages total)
 papuan_languages$Family[papuan_languages$Family == "North Bougainville"] = "Bougainville"
 papuan_languages$Family[papuan_languages$Family == "South Bougainville"] = "Bougainville"
@@ -85,9 +73,7 @@ papuan_languages$Family[papuan_languages$Family == "Bogia"] = "Torricelli"
 papuan_languages$Family[papuan_languages$Family == "Greater Kwerba"] = "Tor-Kwerba"
 papuan_languages$Family[papuan_languages$Family == "Tor-Orya"] = "Tor-Kwerba"
 
-table(papuan_languages$Family)
-
-# We want to use the oxford clade families so we add those here
+# We want to use the oxford handbook clade families so we add those here
 # Match languages to clades
 papuan_clades = read.csv('data/clades.csv')
 
@@ -95,7 +81,7 @@ papuan_languages = left_join(papuan_languages,
                              papuan_clades,
                              by = c("Family" = "Clade_HH2022"))
 
-# Manual fixes
+# Some Manual alignment
 papuan_languages$Clade_EF[papuan_languages$Family == "Kaure-Narau"] = "Kaure"
 papuan_languages$Clade_EF[papuan_languages$Family == "Goilalan"] = "(TNG; Goilalan)"
 papuan_languages$Clade_EF[papuan_languages$Family == "Maybrat-Karon"] = "Maybrat"
