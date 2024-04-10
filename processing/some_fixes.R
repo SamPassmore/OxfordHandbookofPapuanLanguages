@@ -1,20 +1,25 @@
 ## Fixing some kinship systems
-library(dplyr)
-library(stringr)
-library(kinbankr)
+suppressPackageStartupMessages({
+  library(dplyr)
+  library(stringr)
+  library(kinbankr)
+})
 
 structure_files = list.files('processed_data/', "vectors.csv", full.names = TRUE)
 structural_vectors = sapply(structure_files, read.csv, row.names = 1)
 
 kinterms = read.csv("submodules/kinbank/cldf/forms.csv")
 
-## Siblings 
+#### Sibling Vector Fixes ####
+## In most cases, these fixes relate to languages that have a gloss word for sibling
+## but an underlying system (like English). I remove the gloss term, otherwise the
+## analysis will assume the system links all kinterms. 
 sibs = structural_vectors[[2]]
 
 sib_terms = outer(c("m", "f"), c("eB", "eZ", "yB", "yZ"), paste0)
 sib_terms = c(sib_terms[1,], sib_terms[2,])
 
-# Adang
+#### Adang ####
 adang = kinterms %>% 
   filter(Parameter_ID %in% sib_terms) %>% 
   filter(str_detect(Language_ID, "adan1251")) %>% 
@@ -35,7 +40,7 @@ adang_vector = adang_vector[colnames(sibs)]
 
 sibs[str_detect(rownames(sibs), "adan1251"),] = adang_vector
 
-# Momu-Fas
+##### Momu-Fas ####
 Momu = kinterms %>% 
   filter(Parameter_ID %in% sib_terms) %>% 
   filter(str_detect(Language_ID, "fass1245")) %>% 
@@ -56,13 +61,12 @@ Momu_vector = Momu_vector[colnames(sibs)]
 
 sibs[str_detect(rownames(sibs), "fass1245"),] = Momu_vector
 
-# Sawi
+#### Sawi ####
 sawi = kinterms %>% 
   filter(Parameter_ID %in% sib_terms) %>% 
   filter(str_detect(Language_ID, "sawi1257")) %>% 
   filter(Form != "aesom") 
 sawi = sawi[match(sib_terms, sawi$Parameter_ID),]
-nrow(sawi) == 8
 sawi_terms = sawi$Form
 names(sawi_terms) = sawi$Parameter_ID
 
@@ -77,13 +81,12 @@ sawi_vector = sawi_vector[colnames(sibs)]
 
 sibs[str_detect(rownames(sibs), "sawi1257"),] = sawi_vector
 
-# Teiwa
+#### Teiwa ####
 teiwa = kinterms %>% 
   filter(Parameter_ID %in% sib_terms) %>% 
   filter(str_detect(Language_ID, "teiw1235")) %>% 
   filter(Form != "-ianqai") 
 teiwa = teiwa[match(sib_terms, teiwa$Parameter_ID),]
-nrow(teiwa) == 8
 teiwa_terms = teiwa$Form
 names(teiwa_terms) = teiwa$Parameter_ID
 
@@ -98,9 +101,15 @@ teiwa_vector = teiwa_vector[colnames(sibs)]
 
 sibs[str_detect(rownames(sibs), "teiw1235"),] = teiwa_vector
 
+## Save changes
 write.csv(sibs, "processed_data/sibling_vectors.csv")
 
-# Sibs and cousins
+#### Siblings and Cousins #### 
+## In addition to the sibling issues above, many of these languages contain 
+## multiple terms for each cousin. These do not alter the structure of the system
+## but I remove one at random to simplify the analysis. 
+## I have added notes on the particular case below. 
+
 sib_cousins = structural_vectors[[3]]
 
 sibs_andcousins = outer(c("m", "f"), c("eB", "eZ", "yB", "yZ",  # siblings
@@ -110,14 +119,13 @@ sibs_andcousins = outer(c("m", "f"), c("eB", "eZ", "yB", "yZ",  # siblings
                                        "FZeS", "FZyS", "FZeD", "FZyD"), paste0) # father's sister's children
 sibs_andcousins = c(sibs_andcousins[1,], sibs_andcousins[2,])
 
-# Kyaka
+#### Kyaka ####
 Kyaka = kinterms %>% 
   filter(Parameter_ID %in% sibs_andcousins) %>% 
   filter(str_detect(Language_ID, "kyak1244")) %>% 
   filter(!Form %in% c("kaingi", "yangonge", "pemalenge", "kakinyi"))
 # kainigi is a generalise cousin term, but all cousins can be referred to by sibling terms. 
 # The remaining terms are alternative spellings of sibling terms. 
-nrow(Kyaka) == length(sibs_andcousins)
 
 Kyaka = Kyaka[match(sibs_andcousins, Kyaka$Parameter_ID),]
 Kyaka_terms = Kyaka$Form
@@ -134,15 +142,11 @@ Kyaka_vector = Kyaka_vector[colnames(sib_cousins)]
 all(names(Kyaka_vector) == colnames(sib_cousins))
 sib_cousins[str_detect(rownames(sib_cousins), "kyak1244"),] = Kyaka_vector
 
-# Abui
+#### Abui ####
 abui = kinterms %>% 
   filter(Parameter_ID %in% sibs_andcousins) %>% 
   filter(str_detect(Language_ID, "abui1241")) %>% 
   filter(!Form %in% c("-moknehi", "-ura", "-mayol fala", "-neng fala"))
-View(abui)
-# kainigi is a generalise cousin term, but all cousins can be referred to by sibling terms. 
-# The remaining terms are alternative spellings of sibling terms. 
-nrow(abui) == length(sibs_andcousins)
 
 abui = abui[match(sibs_andcousins, abui$Parameter_ID),]
 abui_terms = abui$Form
@@ -159,4 +163,5 @@ abui_vector = abui_vector[colnames(sib_cousins)]
 all(names(abui_vector) == colnames(sib_cousins))
 sib_cousins[str_detect(rownames(sib_cousins), "kyak1244"),] = abui_vector
 
+#### Save Results ####
 write.csv(sib_cousins, "processed_data/sibsandcousins_vectors.csv")
