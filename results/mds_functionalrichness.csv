@@ -3,14 +3,17 @@
 "parentsandsibs_vectors.csv","Indo-European",0.145612731950186
 "parentsandsibs_vectors.csv","Pama-Nyungan",0.548833459821411
 "parentsandsibs_vectors.csv","Papuan",0.731127098219551
-"parentsandsibs_vectors.csv","Global",1
+"parentsandsibs_vectors.csv","Papuan: Nuclear TNG",0.488815597710088
+"parentsandsibs_vectors.csv","Papuan: Other Families",0.195601796125702
 "sibling_vectors.csv","Austronesian",0.954789781278392
 "sibling_vectors.csv","Indo-European",0.054664278708512
 "sibling_vectors.csv","Pama-Nyungan",0.339893748422522
 "sibling_vectors.csv","Papuan",0.70752669122114
-"sibling_vectors.csv","Global",1
+"sibling_vectors.csv","Papuan: Nuclear TNG",0.603768185037504
+"sibling_vectors.csv","Papuan: Other Families",0.317225473058496
 "sibsandcousins_vectors.csv","Austronesian",0.922473871612852
 "sibsandcousins_vectors.csv","Indo-European",0.143947559986313
 "sibsandcousins_vectors.csv","Pama-Nyungan",0.453588805381449
 "sibsandcousins_vectors.csv","Papuan",0.632441706931747
-"sibsandcousins_vectors.csv","Global",1
+"sibsandcousins_vectors.csv","Papuan: Nuclear TNG",0.38192168550592
+"sibsandcousins_vectors.csv","Papuan: Other Families",0.0448368966244435

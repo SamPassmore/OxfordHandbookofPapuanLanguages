@@ -94,7 +94,7 @@ chi_father = fathernuncle_structures$chi2["p-star",]
 
 p_father = make_proportionplot(
   plot_long_father,
-  "Father & Uncles",
+  "Father & Nuncles",
   labels = c("F = FB = MB", "F = FB ≠ MB",
              "F ≠ FB = MB", "F ≠ FB ≠ MB"),
   counts = paste("Non-Papuan = ", f_counts[1], "\nPapuan = ", f_counts[2], sep = "")) + 
@@ -108,13 +108,6 @@ p_father = make_proportionplot(
     y.position = 0.34, label = chi_father["122"],
     tip.length = 0.04
   )
-
-## Modelling 
-df = fathernuncle_structures$structures
-dummies = cbind(papuan = df$papuan, fastDummies::dummy_cols(df$structure))
-
-fit = glm(.data_112 ~ papuan, data = dummies, family = "poisson")
-summary(fit)
 
 ## Aunts 
 fn_types = c("mM", "mMeZ", "mFeZ")
@@ -251,13 +244,6 @@ sibling_pap = left_join(sibling_structures$structures[sibling_structures$structu
                         by = c("Language_ID" = "ID")) %>% 
   filter(structure %in% c(1233))
 
-## Statistical test
-df = sibling_structures$structures
-df$is_1111 = ifelse(df$structure == 1111, 1, 0)
-
-summary(glm(papuan ~ factor(structure), data = df, family = "poisson"))
-exp(0.6)
-
 ## Grandparent reciprocals 
 grandM_types = c("mFF", "mMF", "mSS", "mDS")
 grandM_structures = process_function(grandM_types, papuan_languages = papuan_languages)
@@ -295,11 +281,10 @@ names(interesting_df) = c("Omaha", "Siblings", "GrandkinM", "GrandkinF")
 interesting_df = bind_rows(interesting_df, .id = "type")
 interesting_df$structure.pretty = factor(c("MB = MBS", "MB = MBS", # Omaha labels
                                     "eB ≠ yB ≠ eZ = yZ", "eB ≠ yB ≠ eZ = yZ", # Sibling org. 1
-                                    "eB = yB = eZ = yZ", "eB = yB = eZ = yZ", # Sibling org. 2
                                     "FF = MF = SS = DS", "FF = MF = SS = DS", # Grandkin M
                                     "MM = FM = SD = DD", "MM = FM = SD = DD" # Grandkin F
                                     ), 
-                                    levels = c("eB ≠ yB ≠ eZ = yZ", "eB = yB = eZ = yZ",
+                                    levels = c("eB ≠ yB ≠ eZ = yZ",
                                                "FF = MF = SS = DS", "MM = FM = SD = DD",
                                                "MB = MBS"))
 
@@ -318,15 +303,15 @@ p_interesting = ggplot(data = interesting_df, aes(x = structure.pretty, y = valu
   ylab(element_blank()) + 
   scale_fill_grey() + 
   theme_classic(base_size = 16) + 
-  annotate("text", x = 1.5, y=0.53, label = "Siblings", hjust = 0.5, size = 7) +
-  annotate("text", x = 3.5, y=0.53, label = "Grandkin", hjust = 0.5, size = 7) +
-  annotate("text", x = 5.0, y=0.53, label = "Matrilineal\nSkewing", hjust = 0.5, size = 7) +
-  annotate("label", x = 2.4, y=0.42, label = sib_counts, hjust = 1, label.r = unit(0, "pt")) +
-  annotate("label", x = 2.6, y=0.42, label = gm_counts, hjust = 0, label.r = unit(0, "pt")) +
-  annotate("label", x = 4.4, y=0.42, label = gf_counts, hjust = 1, label.r = unit(0, "pt")) +
-  annotate("label", x = 5.4, y=0.42, label = om_counts, hjust = 1, label.r = unit(0, "pt")) +
-  geom_vline(xintercept = 2.5) + 
-  geom_vline(xintercept = 4.5) + 
+  annotate("text", x = 1.0, y=0.53, label = "Siblings", hjust = 0.5, size = 7) +
+  annotate("text", x = 2.5, y=0.53, label = "Grandkin", hjust = 0.5, size = 7) +
+  annotate("text", x = 4.0, y=0.53, label = "Matrilineal\nSkewing", hjust = 0.5, size = 7) +
+  annotate("label", x = 1.4, y=0.42, label = sib_counts, hjust = 1, label.r = unit(0, "pt")) +
+  annotate("label", x = 1.6, y=0.42, label = gm_counts, hjust = 0, label.r = unit(0, "pt")) +
+  annotate("label", x = 3.4, y=0.42, label = gf_counts, hjust = 1, label.r = unit(0, "pt")) +
+  annotate("label", x = 4.4, y=0.42, label = om_counts, hjust = 1, label.r = unit(0, "pt")) +
+  geom_vline(xintercept = 1.5) + 
+  geom_vline(xintercept = 3.5) + 
   theme(legend.title=element_blank()) +
   ggpubr::geom_bracket(
     xmin = .75, xmax = 1.25,
@@ -335,21 +320,16 @@ p_interesting = ggplot(data = interesting_df, aes(x = structure.pretty, y = valu
   ) +
   ggpubr::geom_bracket(
     xmin = 1.75, xmax = 2.25,
-    y.position = 0.189, label = sibling_structures$chi2[3,"1111"],
-    tip.length = 0.04
-  ) +
-  ggpubr::geom_bracket(
-    xmin = 2.75, xmax = 3.25,
     y.position = 0.411, label = grandM_structures$chi2[3,"1111"],
     tip.length = 0.04
   ) +
   ggpubr::geom_bracket(
-    xmin = 3.75, xmax = 4.25,
+    xmin = 2.75, xmax = 3.25,
     y.position = 0.352, label = grandF_structures$chi2[3,"1111"],
     tip.length = 0.04
   ) +
   ggpubr::geom_bracket(
-    xmin = 4.75, xmax = 5.25,
+    xmin = 3.75, xmax = 4.25,
     y.position = 0.212, label = omaha_structures$chi2[3,"1111"],
     tip.length = 0.04
   )
@@ -523,7 +503,6 @@ table(papuan_structure$Family,
   round(., 3)
 
 # n language families per structure
-sum(x_sibs[,"1111"] >= 1)
 sum(x_sibs[,"1233"] >= 1)
 
 # Grandkin

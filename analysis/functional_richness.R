@@ -10,7 +10,8 @@ get_fr = function(structures,
                   metric,
                   dim,
                   kinbank_languages = kinbank_languages,
-                  of_interest = c("Indo-European", "Austronesian", "Pama-Nyungan")
+                  grouping = "facets", 
+                  of_interest = NULL
 ){
  
   # make all data factors
@@ -27,7 +28,11 @@ get_fr = function(structures,
   kb_l = subset(kinbank_languages, kinbank_languages$Language_ID %in% rownames(structures))
   
   # Make grouping matrix for language families
-  grouping = table(kb_l$facets, kb_l$Language_ID)
+  grouping = table(kb_l[,grouping], kb_l$Language_ID)
+  
+  if(!is.null(of_interest)){
+    grouping = grouping[rownames(grouping) %in% of_interest,]
+  }
   
   ## Return
   fr = fundiversity::fd_fric(traits = kinbank_mds$points, 
@@ -64,11 +69,6 @@ ignore_languages =
 structural_vectors = sapply(structural_vectors, function(x) x[!rownames(x) %in% ignore_languages,])
 
 #### Data ####
-# fr_df = lapply(functional_richness, function(x) x$mds$points)
-# fr_df = purrr::map_df(fr_df, ~as.data.frame(.x), .id="id")
-# fr_df$Language_ID = stringr::str_remove(rownames(fr_df), "\\.\\.\\.[0-9]+")
-# fr_df = left_join(fr_df, kinbank_languages, by = c("Language_ID" = "ID"))
-
 fr_df = kinbank_languages
 
 fr_df = fr_df %>%
@@ -78,7 +78,7 @@ fr_df = fr_df %>%
     Family == "Pama-Nyungan" ~ "Pama-Nyungan",
     ID %in% papuan_languages$ID ~ "Papuan"
   ))) %>% 
-  select(id, V1, V2, Language_ID = ID, Name, Family, family) %>%
+  select(Language_ID = ID, Name, Family, family) %>%
   rename(within_facets = Family,
          facets = family)
 
@@ -97,6 +97,23 @@ functional_richness = lapply(structural_vectors, function(x) get_fr(x, metric = 
 names(functional_richness) = basename(structure_files)
 
 fr_scores = lapply(functional_richness, "[[", 1)
+
+## Calculate fr for within facets
+functional_richness_wnfacets = lapply(structural_vectors, function(x)
+  get_fr(
+    x,
+    metric = "manhattan",
+    dim = 2,
+    kinbank_languages = fr_df,
+    grouping = "within_facets",
+    of_interest = c("Yam", "Sepik", "North Halmahera", "Timor-Alor-Pantar", "Nuclear Trans New Guinea")
+  ))
+
+
+fr_points = lapply(functional_richness, function(x) x$mds$points)
+fr_points = purrr::map_df(fr_points, ~as.data.frame(.x), .id="id")
+fr_points$Language_ID = stringr::str_remove(rownames(fr_points), "\\.\\.\\.[0-9]+")
+fr_df = left_join(fr_points, fr_df, by = c("Language_ID" = "Language_ID"), relationship = "many-to-many")
 
 # Remove other within_facets
 fr_df$within_facets[!fr_df$within_facets %in% c("Yam", "Timor-Alor-Pantar", "Sepik", "North Halmahera", "Austronesian", "Indo-European", "Pama-Nyungan", "Nuclear Trans New Guinea")] = NA
@@ -126,7 +143,7 @@ fr_df$facets = factor(fr_df$facets,
                             levels = c("Papuan", "Papuan: Nuclear TNG", "Papuan: Other Families", "Austronesian", 
                                        "Pama-Nyungan", "Indo-European"))
 
-# Arguments to make the graph pretty
+#### Arguments to make the graph pretty ####
 
 # axis limits
 fr_df = fr_df %>%
@@ -145,9 +162,9 @@ facet_names =
     "Indo-European" = "Indo-European",
     "Austronesian" = "Austronesian",
     "Pama-Nyungan" = "Pama-Nyungan",
-    "Papuan: Nuclear TNG" = "Papuan: Nuclear TNG",
+    "Papuan: Nuclear TNG" = "Papuan: TNG",
     "Papuan: Other Families" = "Papuan: Other Families",
-    Papuan = "Papuan"
+    Papuan = "All Papuan"
   )
 
 idx = which(fr_df$within_facets == "Yam" & fr_df$facets == "Papuan: Other Families" & fr_df$id == "sibling_vectors.csv")
@@ -182,8 +199,6 @@ p = ggplot() +
   geom_blank(data = fr_df[!is.na(fr_df$facets),], aes(x = xmin)) + geom_blank(data = fr_df[!is.na(fr_df$facets),], aes(x = xmax))
 
 #p
-## table of FR
-# lapply(fr, function(x) cbind(x[,1], round(x[,2], 2)))
 ## Save main plot
 ggsave(plot = p, filename = "design_space_mds_woOutliers.pdf", height = 297, width = 210, units = "mm")
 

@@ -1,4 +1,8 @@
-## This is the build script
+## This script will build all analyses used in section 3.1 of Chapter 40 in the 
+## Oxford Handbook of Papuan Languages 
+
+## This script will require that the Kinbank submodule is activated 
+## before running. To initiliase the
 
 # 1. Identify all Papuan languages & Get descriptives
 system("Rscript processing/get_papuanlanguages.R")
