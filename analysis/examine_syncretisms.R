@@ -357,4 +357,4 @@ p_interesting = ggplot(data = interesting_df, aes(x = structure.pretty, y = valu
 (p_father + p_mother) / (p_cousinM + p_cousinF) / p_interesting +
   plot_layout(guides = 'collect') & theme(legend.position = 'bottom')
 grid::grid.draw(grid::textGrob("Proportion", x = 0.007, rot = 90))
-ggsave("proportions_plot.png", height = 300, units = "mm")
+ggsave("figures/proportions_plot.png", height = 300, units = "mm")

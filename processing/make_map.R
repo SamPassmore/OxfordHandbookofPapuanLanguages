@@ -30,4 +30,4 @@ p = ggplot(new_guinea) +
   ylab(element_blank()) + 
   theme_minimal()
 
-ggsave(filename = "map.png", plot = p)
+ggsave(filename = "figures/map.png", plot = p)

@@ -211,7 +211,7 @@ p = ggplot() +
   geom_blank(data = fr_df[!is.na(fr_df$facets),], aes(x = xmin)) + geom_blank(data = fr_df[!is.na(fr_df$facets),], aes(x = xmax))
 
 ## Save main plot
-ggsave(plot = p, filename = "design_space_mds_woOutliers.pdf", height = 297, width = 210, units = "mm")
+ggsave(plot = p, filename = "figures/design_space_mds_woOutliers.pdf", height = 297, width = 210, units = "mm")
 
 fr_csv = purrr::map_df(fr_scores, ~as.data.frame(.x), .id="id")
 write.csv(fr_csv, "results/mds_functionalrichness.csv", row.names = FALSE)
