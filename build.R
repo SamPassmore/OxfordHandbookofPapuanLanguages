@@ -22,8 +22,7 @@ system("Rscript processing/base_map.R")
 system("Rscript processing/make_map.R") # Creates Figure 2
 
 # 4. Identify syncritisms where Papuan languages stand out
-system("Rscript analysis/examine_syncretisms.R")
-system("Rscript processing/visualise_syncretisms.R")
+system("Rscript analysis/examine_syncretisms.R") # Creates Figure 3
 
 # 5. How many unique Papuan structures are there?
 system("Rscript analysis/unique_papuan_structures.R")

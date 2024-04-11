@@ -1,4 +1,3 @@
-## Comparisons of interest
 
 suppressPackageStartupMessages({
   library(kinbankr)
@@ -13,7 +12,15 @@ papuan_languages = read.csv('processed_data/papuan_languages.csv')
 # kinbank language metadata
 data("languages")
 
-## functions
+
+#' Processing function for calculate structural syncretisms 
+#'
+#' @param kin_types The kinstypes of interest to be processed.
+#' @param papuan_languages A list of languages to analyse separately. 
+#' This is always Papuan langauges here, but it needn't be. 
+#'
+#' @return A list containing the proportions of each structure, the structures 
+#' themselves, and chi-squared tests between all pairs of structures. 
 process_function = function(kin_types, papuan_languages){
   # get vectors
   structural_vectors = kinbankr::get_structural_vectors(kin_types, duplicates ="random", method = "binary")
@@ -48,6 +55,14 @@ process_function = function(kin_types, papuan_languages){
   list(summary = proportions, structures = structures, chi2 = chi2)
 }
 
+#' Make a plot of the proportions
+#'
+#' @param data A dataframe of proportions obtained from the process_function
+#' @param title The title of the graph
+#' @param labels Labels to include in the graph 
+#' @param counts A vector containing the count of langauges within each graph
+#'
+#' @return a ggplot graph
 make_proportionplot = function(data, title, labels, counts){
   data$name = gsub(x = data$name, pattern = "\\.", replacement = "-")
   
@@ -64,13 +79,26 @@ make_proportionplot = function(data, title, labels, counts){
     theme(legend.title=element_blank())
 }
 
+#' A wrapper for a Chi Square test
+#'
+#'@description
+#'This function formats the output of a Chi-Square test for the ggplot in make_proportionplot
+#'It is a function internal to process_function.
+#' @param summary_table 
+#' @param totals 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 chi_test_wrapper = function(summary_table, totals){
   c2 = chisq.test(rbind(summary_table, totals - summary_table), simulate.p.value = TRUE)
   c(c2$statistic, c2$p.value)
 }
-  
 
-# Parent / Nuncle males
+#### Making the Graphs ####
+
+#### Parent / Nuncle males ####
 ## F = FB = MB
 ## F != FB = MB
 ## F = FB != MB
@@ -109,7 +137,7 @@ p_father = make_proportionplot(
     tip.length = 0.04
   )
 
-## Aunts 
+#### Aunts ####
 fn_types = c("mM", "mMeZ", "mFeZ")
 aunt_structures = process_function(fn_types, papuan_languages = papuan_languages)
 aunt_structures$structures$Language_ID = rownames(aunt_structures$structures)
@@ -144,12 +172,12 @@ p_mother = make_proportionplot(
     tip.length = 0.04
   )
 
-# Cousins
+#### Cousins ####
 cousin_types = c("meB", "mFBeS", "mFZeS")
 cousinM_structures = process_function(cousin_types, papuan_languages = papuan_languages)
 cousinM_structures$structures$Language_ID = rownames(cousinM_structures$structures)
 
-## Cousin organisation (Males)
+#### Cousin organisation (Males) ####
 plot_cousinM = data.frame(cousinM_structures$summary)
 plot_long_cousinM = pivot_longer(plot_cousinM, cols = !structure) 
 
@@ -179,7 +207,7 @@ p_cousinM = make_proportionplot(
     tip.length = 0.04
   )
 
-# Female cousins
+#### Female cousins ####
 cousin_types = c("meZ", "mMZeD", "mFZeD")
 cousinF_structures = process_function(cousin_types, papuan_languages = papuan_languages)
 cousinF_structures$structures$Language_ID = rownames(cousinF_structures$structures)
@@ -214,8 +242,8 @@ p_cousinF = make_proportionplot(
   )
 
 
-## Other notable differences 
-# Omaha Cousins
+#### Other notable differences ####
+## Omaha Cousins ##
 omaha_types = c("mMeB", "mMyB", "mMBeS", "mMByS")
 omaha_structures = process_function(omaha_types, papuan_languages = papuan_languages)
 omaha_structures$structures$Language_ID = rownames(omaha_structures$structures)
@@ -227,7 +255,7 @@ plot_omaha_long = plot_omaha_long %>%
   filter(value != 0) %>% 
   filter(structure == 1111)
 
-#### Sibling organisation 
+#### Sibling organisation ####
 siblings_types = c("meB", "myB", "meZ", "myZ")
 sibling_structures = process_function(siblings_types, papuan_languages = papuan_languages)
 sibling_structures$structures$Language_ID = rownames(sibling_structures$structures)
@@ -239,12 +267,8 @@ plot_sibs_long = plot_sibs_long %>%
   filter(value != 0) %>% 
   filter(structure %in% c(1233))
 
-# Papuan families
-sibling_pap = left_join(sibling_structures$structures[sibling_structures$structures$papuan == 1,], papuan_languages,
-                        by = c("Language_ID" = "ID")) %>% 
-  filter(structure %in% c(1233))
-
-## Grandparent reciprocals 
+#### Grandparent Reciprocals ####
+### Male GP ###
 grandM_types = c("mFF", "mMF", "mSS", "mDS")
 grandM_structures = process_function(grandM_types, papuan_languages = papuan_languages)
 grandM_structures$structures$Language_ID = rownames(grandM_structures$structures)
@@ -256,13 +280,7 @@ plot_grandM_long = plot_grandM_long %>%
   filter(value != 0) %>% 
   filter(structure %in% c(1111))
 
-# Papuan families
-grandM_pap = left_join(grandM_structures$structures[grandM_structures$structures$papuan == 1,], papuan_languages,
-                        by = c("Language_ID" = "ID")) %>% 
-  filter(structure == 1111)
-
-table(grandM_pap$structure, grandM_pap$Clade_EF)
-
+### Female GP ###
 grandF_types = c("mFM", "mMM", "mSD", "mDD")
 grandF_structures = process_function(grandF_types, papuan_languages = papuan_languages)
 grandF_structures$structures$Language_ID = rownames(grandF_structures$structures)
@@ -274,7 +292,7 @@ plot_grandF_long = plot_grandF_long %>%
   filter(value != 0) %>% 
   filter(structure %in% c(1111))
 
-# join other interesting stats
+### Join interesting statistics together
 interesting_df = list(plot_omaha_long, plot_sibs_long, plot_grandM_long, plot_grandF_long)
 names(interesting_df) = c("Omaha", "Siblings", "GrandkinM", "GrandkinF")
 
@@ -288,6 +306,7 @@ interesting_df$structure.pretty = factor(c("MB = MBS", "MB = MBS", # Omaha label
                                                "FF = MF = SS = DS", "MM = FM = SD = DD",
                                                "MB = MBS"))
 
+## Calculate counts ## 
 om_counts = paste(table(omaha_structures$structures$papuan), collapse = "\n")
 sib_counts = paste(table(sibling_structures$structures$papuan), collapse = "\n")
 gm_counts = paste(table(grandM_structures$structures$papuan), collapse = "\n")
@@ -334,208 +353,8 @@ p_interesting = ggplot(data = interesting_df, aes(x = structure.pretty, y = valu
     tip.length = 0.04
   )
 
-# Frequency graphs
+#### Build Figure 3 ####
 (p_father + p_mother) / (p_cousinM + p_cousinF) / p_interesting +
   plot_layout(guides = 'collect') & theme(legend.position = 'bottom')
 grid::grid.draw(grid::textGrob("Proportion", x = 0.007, rot = 90))
 ggsave("proportions_plot.png", height = 300, units = "mm")
-
-#### Bifurcate merging patterns by Language family ####
-## Do languages with bifurcate merging in parents have bifurcate merging in other parts. 
-
-# merge all data into one big file
-languages_structures = left_join(languages, fathernuncle_structures$structures, by = c("ID" = "Language_ID"), suffix = c("", ".father")) %>% 
-  left_join(., aunt_structures$structures, by = c("ID" = "Language_ID", "papuan"), suffix = c("", ".mother")) %>% 
-  left_join(., cousinM_structures$structures, by = c("ID" = "Language_ID", "papuan"), suffix = c("", ".cousinM")) %>% 
-  left_join(., cousinF_structures$structures, by = c("ID" = "Language_ID", "papuan"), suffix = c("", ".cousinF")) %>% 
-  left_join(., sibling_structures$structures, by = c("ID" = "Language_ID", "papuan"), suffix = c("", ".siblings")) %>% 
-  left_join(., grandM_structures$structures, by = c("ID" = "Language_ID", "papuan"), suffix = c("", ".grandM")) %>% 
-  left_join(., grandF_structures$structures, by = c("ID" = "Language_ID", "papuan"), suffix = c("", ".grandF")) %>% 
-  left_join(., omaha_structures$structures, by = c("ID" = "Language_ID", "papuan"), suffix = c("", ".omaha"))
-
-
-# Simple tables
-## Father
-table(languages_structures$structure, languages_structures$papuan)
-## Mother
-table(languages_structures$structure.mother, languages_structures$papuan)
-## Male Cousins
-table(languages_structures$structure.cousinM, languages_structures$papuan)
-## Female cousins
-table(languages_structures$structure.cousinF, languages_structures$papuan)
-
-# Number of languages with BM in F and other subsets
-# Rows is F structures, Columns is other structure
-table(languages_structures$structure, languages_structures$structure.mother, languages_structures$papuan)
-table(languages_structures$structure, languages_structures$structure.cousinM, languages_structures$papuan)
-table(languages_structures$structure, languages_structures$structure.cousinF, languages_structures$papuan)
-
-table(languages_structures$structure.cousinM, languages_structures$structure.cousinF, languages_structures$papuan)
-table(languages_structures$structure.cousinM, languages_structures$structure.mother, languages_structures$papuan)
-table(languages_structures$structure.grandM, languages_structures$papuan)
-
-## Coherency of BM in Parents generation
-languages_structures$bm_inconsistent = rowSums(cbind(languages_structures$structure == 112,
-                                        languages_structures$structure.mother == 112)) == 1
-
-languages_structures$bm_consistent = rowSums(cbind(languages_structures$structure == 112,
-                                                     languages_structures$structure.mother == 112)) == 2
-
-## BM rel proportion table
-papuan_structures = languages_structures[languages_structures$papuan == 1,]
-vars = c("structure", "structure.mother", "structure.cousinM", "structure.cousinF")
-tt = matrix(NA, ncol = 4, nrow = 4)
-tt[1,] =  colSums(papuan_structures[,vars] == 112, na.rm = TRUE) / sum(papuan_structures$structure == 112, na.rm = TRUE)
-tt[2,] =  colSums(papuan_structures[,vars] == 112, na.rm = TRUE) / sum(papuan_structures$structure.mother == 112, na.rm = TRUE)
-tt[3,] =  colSums(papuan_structures[,vars] == 112, na.rm = TRUE) / sum(papuan_structures$structure.cousinM == 112, na.rm = TRUE)
-tt[4,] =  colSums(papuan_structures[,vars] == 112, na.rm = TRUE) / sum(papuan_structures$structure.cousinF == 112, na.rm = TRUE)
-dimnames(tt) = list(c("MP", "FP", "MC", "FM"), c("MP", "FP", "MC", "FM"))
-round(tt, 2)
-
-## Coherency of BM in cousin generation
-languages_structures$bmc_inconsistent = rowSums(cbind(languages_structures$structure.cousinM == 112,
-                                                     languages_structures$structure.cousinF == 112)) == 1
-
-languages_structures$bmc_consistent = rowSums(cbind(languages_structures$structure.cousinM == 112,
-                                                   languages_structures$structure.cousinF == 112)) == 2
-
-table(languages_structures$bmc_inconsistent, languages_structures$papuan)
-table(languages_structures$bmc_consistent, languages_structures$papuan)
-
-
-
-# How many Papuan languages have BM in all subsets
-sum(languages_structures$papuan == 1 &
-  languages_structures$structure == 112 & 
-      languages_structures$structure.mother == 112 & 
-      languages_structures$structure.cousinM == 112 & 
-      languages_structures$structure.cousinF == 112, na.rm = TRUE)
-
-# How many papuan languages have BM in G+1
-sum(languages_structures$papuan == 1 &
-      languages_structures$structure == 112 & 
-      languages_structures$structure.mother == 112, na.rm = TRUE)
-
-# How many papuan languages have BM in G0
-sum(languages_structures$papuan == 1 &
-      languages_structures$structure.cousinM == 112 & 
-      languages_structures$structure.cousinF == 112, na.rm = TRUE)
-
-
-# How many Papuan languages do we have data for all subsets
-sum(languages_structures$papuan == 1 &
-  !is.na(languages_structures$structure) & 
-      !is.na(languages_structures$structure.mother) & 
-      !is.na(languages_structures$structure.cousinM) &
-      !is.na(languages_structures$structure.cousinF))
-
-# How many Papuan languages do we have data on G+1
-sum(languages_structures$papuan == 1 &
-      !is.na(languages_structures$structure) & 
-      !is.na(languages_structures$structure.mother))
-
-# How many Papuan languages do we have data on G0
-sum(languages_structures$papuan == 1 &
-      !is.na(languages_structures$structure.cousinM) &
-      !is.na(languages_structures$structure.cousinF))
-
-# Male G+1 & G0
-sum(languages_structures$papuan == 1 &
-      !is.na(languages_structures$structure.cousinM) &
-      !is.na(languages_structures$structure))
-
-table(languages_structures$structure.cousinM,
-      languages_structures$structure,
-      languages_structures$papuan)
-
-table(languages_structures$structure.cousinF,
-      languages_structures$structure.mother,
-      languages_structures$papuan)
-
-papuan_idx = languages_structures$papuan == 1
-
-## Papuan structures
-papuan_structure = left_join(papuan_languages, fathernuncle_structures$structures, by = c("ID" = "Language_ID"), suffix = c("", ".father")) %>% 
-  left_join(., aunt_structures$structures, by = c("ID" = "Language_ID", "papuan"), suffix = c("", ".mother")) %>% 
-  left_join(., cousinM_structures$structures, by = c("ID" = "Language_ID", "papuan"), suffix = c("", ".cousinM")) %>% 
-  left_join(., cousinF_structures$structures, by = c("ID" = "Language_ID", "papuan"), suffix = c("", ".cousinF")) %>% 
-  left_join(., sibling_structures$structures, by = c("ID" = "Language_ID", "papuan"), suffix = c("", ".siblings")) %>% 
-  left_join(., grandM_structures$structures, by = c("ID" = "Language_ID", "papuan"), suffix = c("", ".grandM")) %>% 
-  left_join(., grandF_structures$structures, by = c("ID" = "Language_ID", "papuan"), suffix = c("", ".grandF")) %>% 
-  left_join(., omaha_structures$structures, by = c("ID" = "Language_ID", "papuan"), suffix = c("", ".omaha"))
-
-# Father/Nuncle LF
-x_f = table(papuan_structure$Family,
-      papuan_structure$structure)
-sum(x_f[,"112"] >= 1)
-
-# Mother/Aunt LF
-x_m = table(papuan_structure$Family,
-      papuan_structure$structure.mother)
-sum(x_m[,"112"] >= 1)
-nrow(x_m)
-
-# Male Cousins LF
-x_cm = table(papuan_structure$Family,
-      papuan_structure$structure.cousinM)
-sum(x_cm[,"112"] >= 1)
-nrow(x_cm)
-
-# Female Cousins LF
-x_cf = table(papuan_structure$Family,
-      papuan_structure$structure.cousinF)
-sum(x_cf[,"112"] >= 1)
-nrow(x_cf)
-
-table(papuan_structure$structure.cousinF)
-
-# Omaha language families
-table(papuan_structure$Family,
-      papuan_structure$structure.omaha)
-
-# Siblings structure
-x_sibs = table(papuan_structure$Family,
-      papuan_structure$structure.siblings)
-
-table(papuan_structure$Family,
-      papuan_structure$structure.siblings) %>% 
-  prop.table(., margin = 1) %>% 
-  round(., 3)
-
-# n language families per structure
-sum(x_sibs[,"1233"] >= 1)
-
-# Grandkin
-x_grandM = table(papuan_structure$Family,
-      papuan_structure$structure.grandM)
-
-x_grandF = table(papuan_structure$Family,
-                 papuan_structure$structure.grandF)
-
-# n language families per structure
-sum(x_grandM[,"1111"] >= 1)
-sum(x_grandF[,"1111"] >= 1)
-
-## Maps
-new_guinea = sf::read_sf("processed_data/base_map.shp")
-
-## Reciprocal grandparents
-papuan_structure$structure.grandF_bin = factor(ifelse(papuan_structure$structure.grandF == 1111, 1, 0))
-p = ggplot(new_guinea) + 
-  geom_sf(fill = "white") + 
-  geom_point(data = subset(papuan_structure, !is.na(structure.grandF_bin)), aes(x = Longitude, y = Latitude, fill = structure.grandF_bin), shape = 21) + 
-  xlab(element_blank()) + 
-  ylab(element_blank()) + 
-  theme_minimal()
-
-## Reciprocal grandparents
-papuan_structure$omaha = factor(ifelse(papuan_structure$structure.omaha == 1111, 1, 0))
-p = ggplot(new_guinea) + 
-  geom_sf(fill = "white") + 
-  geom_point(data = subset(papuan_structure, !is.na(omaha)), aes(x = Longitude, y = Latitude, fill = omaha), shape = 21) + 
-  xlab(element_blank()) + 
-  ylab(element_blank()) + 
-  theme_minimal()
-
-## Save syncretisms 
-write.csv(papuan_structure, "processed_data/papuan_syncretisms.csv")
