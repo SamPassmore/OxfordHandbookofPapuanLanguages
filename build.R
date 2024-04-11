@@ -25,11 +25,7 @@ system("Rscript processing/make_map.R") # Creates Figure 2
 system("Rscript analysis/examine_syncretisms.R") # Creates Figure 3
 
 # 5. How many unique Papuan structures are there?
-system("Rscript analysis/unique_papuan_structures.R")
+system("Rscript analysis/unique_papuan_structures.R") # Creates data for Table 2
 
 # 6. Functional Richness analysis projections & Average distance between structures
-system("Rscript analysis/functional_richness.R")
-system("Rscript analysis/FR_samplingAustronesian.R") # Random sampling of Austronesian languages
-
-# 7. Average distance between languages & language families 
-system("Rscript analysis/average_distance.R")
+system("Rscript analysis/functional_richness.R") # Creates Figure 4

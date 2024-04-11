@@ -6,6 +6,16 @@ suppressPackageStartupMessages({
   library(ggpattern)
 })
 
+#' Function to get Functional Richness for some subset of data
+#'
+#' @param structures Kinship structural vectors built in earlier scripts
+#' @param metric Character. Showing what distance metric to use 
+#' @param dim How many dimensions to calculate FR for. Numeric. Default 2.
+#' @param kinbank_languages The language to analyse
+#' @param grouping Groupings for the languages. Usually Language Family. 
+#' @param of_interest Particular languages of interest to highlight. 
+#'
+#' @return A list containing the Functional Richness of the groupings, and the MDS output
 get_fr = function(structures,
                   metric,
                   dim,
@@ -58,6 +68,7 @@ papuan_languages = read.csv('processed_data/papuan_languages.csv')
 kinbank_languages$Family[match(papuan_languages$ID, kinbank_languages$ID)] = papuan_languages$Family
 
 # remove languages that are problematic
+# Details for ignoring are listed below. 
 ignore_languages = 
   # These languages have overlaid kinship systems that makes it difficult to determine the appropriate structure
   c("p_bannonibann1247", "p_bariokelabitbari1288", "p_ifugawifugaoifug1247", "p_kulisusukuli1254",
@@ -82,14 +93,14 @@ fr_df = fr_df %>%
   rename(within_facets = Family,
          facets = family)
 
-## Split Papuan facets
+## Split Papuan languages into different facets
 other_papuan = fr_df[fr_df$facets == "Papuan" & fr_df$within_facets %in% c("Yam", "Sepik", "North Halmahera"),] 
 n_tng = fr_df[fr_df$facets == "Papuan" & fr_df$within_facets%in% c("Timor-Alor-Pantar", "Nuclear Trans New Guinea"),]
 
 other_papuan$facets = "Papuan: Other Families"
 n_tng$facets = "Papuan: Nuclear TNG"
 
-## Add Papuan Facets
+## Add Papuan Facets to the main data
 fr_df = rbind(fr_df, n_tng, other_papuan)
 
 # Calculate functional richness
@@ -144,7 +155,6 @@ fr_df$facets = factor(fr_df$facets,
                                        "Pama-Nyungan", "Indo-European"))
 
 #### Arguments to make the graph pretty ####
-
 # axis limits
 fr_df = fr_df %>%
   group_by(id) %>%
@@ -169,6 +179,8 @@ facet_names =
 
 idx = which(fr_df$within_facets == "Yam" & fr_df$facets == "Papuan: Other Families" & fr_df$id == "sibling_vectors.csv")
 fr_df$V1[idx] = fr_df$V1[idx] + rnorm(4)
+
+#### Make the plot ### 
 
 p = ggplot() + 
   geom_jitter(data = transform(fr_df[!is.na(fr_df$facets),], facets = NULL), aes(x = V1, y = V2), height = 1, width = 1, alpha = 0.1) +
@@ -198,49 +210,8 @@ p = ggplot() +
   geom_blank(data = fr_df[!is.na(fr_df$facets),], aes(y = ymin)) + geom_blank(data = fr_df[!is.na(fr_df$facets),], aes(y = ymax)) +
   geom_blank(data = fr_df[!is.na(fr_df$facets),], aes(x = xmin)) + geom_blank(data = fr_df[!is.na(fr_df$facets),], aes(x = xmax))
 
-#p
 ## Save main plot
 ggsave(plot = p, filename = "design_space_mds_woOutliers.pdf", height = 297, width = 210, units = "mm")
 
 fr_csv = purrr::map_df(fr_scores, ~as.data.frame(.x), .id="id")
 write.csv(fr_csv, "results/mds_functionalrichness.csv", row.names = FALSE)
-
-#### Within-Papuan language family variability #### 
-fr_papuan = fr_df_global[fr_df_global$family == "Papuan",]
-
-xx = data.frame(table(fr_papuan$Family, fr_papuan$id))
-xx[xx$Freq >= 4,] %>% View()
-
-fr_papuan$Language_Family = fr_papuan$Family
-
-hull_df = fr_papuan[fr_papuan$Family %in% c("Yam", "Timor-Alor-Pantar", "Sepik", "North Halmahera"),]
-
-hull_df2 = hull_df[hull_df$id == "parentsandsibs_vectors.csv",]
-
-ggplot(data = hull_df2,
-       aes(x = V1, y = V2, group = Language_Family)) + 
-  geom_mark_hull() +
-  geom_point(data = hull_df[hull_df$id == "parentsandsibs_vectors.csv", ], aes(x = V1, y = V2, shape = Language_Family)) 
-
-p_papuan = ggplot(data = fr_papuan) + 
-  geom_mark_hull(
-    data = hull_df,
-    aes(x = V1, y = V2, fill = Family),
-    concavity = concavity,
-    # color = "NA",
-    alpha = 0.3,
-    expand = unit(4, "mm"),
-    radius = unit(4, "mm")) + 
-  geom_jitter(data = fr_papuan, aes(x = V1, y = V2),
-                  shape = 21, size = 2, height = 1, width = 1,
-                  col = "black", fill = 'white') +
-  theme_classic(base_size = 20) +
-  theme(panel.border = element_rect(colour = "black", fill=NA, size = 1),
-        legend.position = "right") +
-  xlab(element_blank()) +
-  ylab(element_blank()) +
-  facet_wrap(~id + family, drop = T, labeller = as_labeller(facet_names), ncol = 5, scales = "free") + 
-  geom_blank(aes(y = ymin)) + geom_blank(aes(y = ymax)) +
-  geom_blank(aes(x = xmin)) + geom_blank(aes(x = xmax)) 
-
-p_papuan
