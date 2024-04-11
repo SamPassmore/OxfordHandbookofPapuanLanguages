@@ -3,6 +3,8 @@
 
 Nicholas Evans, Bruno Olsson, Wolfgang Barth, Simon Greenhill, Sam Passmore. 
 
+[![DOI](https://zenodo.org/badge/657452956.svg)](https://zenodo.org/doi/10.5281/zenodo.10957815)
+
 This is the repository for Evans et al. (2024) "Kinship semantics in Papuan languages". 
 We will provide a reference to the chapter and handbook once it is available. 
 
