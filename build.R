@@ -19,7 +19,7 @@ system("Rscript processing/some_fixes.R")
 
 # 3. Make maps 
 system("Rscript processing/base_map.R")
-system("Rscript processing/make_map.R")
+system("Rscript processing/make_map.R") # Creates Figure 2
 
 # 4. Identify syncritisms where Papuan languages stand out
 system("Rscript analysis/examine_syncretisms.R")

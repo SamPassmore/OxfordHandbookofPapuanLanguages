@@ -1,25 +1,27 @@
-## map of papuan languages
+## This script will plot the location of Papuan langauges on a Map
 
-## build raster for New Guinea
-library(sf)
-library(rnaturalearth)
-library(rnaturalearthdata)
-library(dplyr)
-library(ggplot2)
-library(ggrepel)
+suppressPackageStartupMessages({
+  library(sf)
+  library(rnaturalearth)
+  library(rnaturalearthdata)
+  library(dplyr)
+  library(ggplot2)
+  library(ggrepel)
+})
 
-## Get outline of New Guinea
+## Get the outline of New Guinea from the previous script
 new_guinea = sf::read_sf("processed_data/base_map.shp")
 
-## Get data locations
+## Get location of languages
 papuan_languages = read.csv('processed_data/papuan_languages.csv')
 
-## Get labal locations
+## Get the locations of labelled languages
 label_data = papuan_languages %>% 
   filter(Name %in% c("Watam", "Ekari", "Nen", "Sibe"))
 
 label_data$Name = recode(label_data$Name, Ekari = "Ekagi", Sibe = "Nagovisi")
 
+## Plot the Map
 p = ggplot(new_guinea) + 
   geom_sf(fill = "white") + 
   geom_point(data = papuan_languages, aes(x = Longitude, y = Latitude), shape = 21, fill = "black") + 
