@@ -2,6 +2,12 @@
 *.png
 *.xlsx
 
+# Ignore these mapping files
+processed_data/base_map.dbf
+processed_data/base_map.prj
+processed_data/base_map.shp
+processed_data/base_map.shx
+
 # History files
 .Rhistory
 .Rapp.history
